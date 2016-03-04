@@ -42,7 +42,7 @@
     // controlLayers.addBaseLayer (variableName, 'label'); -- adds baselayer and label to legend; omit if only one baselayer with no toggle desired
     var lightAll = new L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-    }).addTo(map); //this displays layer by default
+    }); //this displays layer by default
     controlLayers.addBaseLayer(lightAll, 'CartoDB LightAll'); // change the display name
 
     var lightNoLabels = new L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
@@ -53,7 +53,7 @@
     // Esri satellite map from http://leaflet-extras.github.io/leaflet-providers/preview/
     var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    });
+    }).addTo(map);
     controlLayers.addBaseLayer(Esri_WorldImagery, 'Esri World Imagery');
 
     /* POINT OVERLAYS */
