@@ -18,6 +18,7 @@ http://jackdougherty.github.io/leaflet-map-simple
 9. All content in the gh-pages branch is viewable on the public web, at the link you retyped above, but **you may need to wait up to 10 minutes for the first instance to appear.** Afterwards, any changes you make to the gh-pages branch should appear within 10 seconds.
 
 
+
 ## Learn more
 
 http://DataVizForAll.org
