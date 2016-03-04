@@ -1,7 +1,7 @@
 # leaflet-map-simple
 A simple Leaflet map template for new users to explore. 
 
-## Link to my live demo on my gh-pages branch:
+## Link to live site on my gh-pages branch:
 http://jackdougherty.github.io/leaflet-map-simple
 
 ## To make this repository your own version
