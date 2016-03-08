@@ -71,7 +71,7 @@
           marker.bindPopup(feature.properties.location); // replace 'location' with data label from your GeoJSON file
           return marker;
         }
-      }); // insert ".addTo(map)" to display layer by default
+      }).addTo(map); // insert ".addTo(map)" to display layer by default
       controlLayers.addOverlay(geoJsonLayer, 'Lunch (blue markers)');
     });
 
