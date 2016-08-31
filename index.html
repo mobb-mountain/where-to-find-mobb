@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Leaflet map simple template</title>
-    <!-- These lines load code from LeafletJS.com and JQuery.com online libraries to run the map -->
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css" />
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script>
-    <!-- These lines of Cascading Style Sheet (CSS) code position the map -->
+    <title>leaflet-map-simple</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <!-- Load Leaflet from a https CDN, not http. Look for updates at http://leafletjs.com/download.html -->
+    <link rel="stylesheet" href="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.css"/>
+    <script src="https://npmcdn.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
+    <!-- load jQuery to call local data files-->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <!-- Insert Cascading Style Sheet (CSS) code to position the map -->
     <style>
       body { margin:0; padding:0; }
       #map { position: absolute; top:0; bottom:0; right:0; left:0; }
