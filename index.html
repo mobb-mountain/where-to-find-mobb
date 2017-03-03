@@ -4,17 +4,17 @@
   <title>leaflet-map-simple</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <!-- Load Leaflet - see updates at http://leafletjs.com/download.html -->
+  
+  <!-- Load Leaflet code library - see updates at http://leafletjs.com/download.html -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-  <script src="https://code.jquery.com/jquery-3.1.0.min.js"
-  integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
-  crossorigin="anonymous"></script>
-  <!-- Insert Cascading Style Sheet (CSS) to position the map -->
+
+  <!-- Position the map with Cascading Style Sheet (CSS) -->
   <style>
   body { margin:0; padding:0; }
   #map { position: absolute; top:0; bottom:0; right:0; left:0; }
   </style>
+
 </head>
 <body>
 
@@ -24,44 +24,25 @@
   <!-- Insert Javascript (.js) code to create the map -->
   <script>
 
-  // set up map center and zoom level
+  // Set up initial map center and zoom level
   var map = L.map('map', {
-    center: [41.76, -72.69], // add new coordinates to center the map
-    zoom: 13    // number 5 to 18 -- decrease to zoom out, increase to zoom in
+    center: [41.77, -72.69], // EDIT latitude, longitude to re-center map
+    zoom: 12  // EDIT from 1 to 18 -- decrease to zoom out, increase to zoom in
   });
-
-  // display Carto basemap tiles with light features and no labels
-  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_nolabels/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
-  }).addTo(map); // displays map by default
 
   // display Carto basemap tiles with light features and labels
-  // insert ".addTo(map)" before last semicolon to display Stamen basemap tiles with colored terrain and labels
+  L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+  }).addTo(map); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
+
+  // display Stamen basemap tiles with colored terrain and labels
   L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png', {
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
-  });
+  }); // EDIT - insert or remove ".addTo(map)" before last semicolon to display by default
 
   // display a default blue point marker with pop-up text
-  L.marker([41.759, -72.69]).addTo(map)
-  .bindPopup("Insert pop-up text");
-
-  // load a geojson polygon file and display it in red
-  $.getJSON("polygons.geojson", function (data) {   // insert pathname to your local directory file
-    var geoJsonLayer = L.geoJson(data, {
-      style: function (feature) {
-        return {
-          'color': 'red',
-          'weight': 2,
-          'fillColor': '#fff',
-          'fillOpacity': 0.2
-        }
-      },
-      onEachFeature: function( feature, layer) {
-        layer.bindPopup(feature.properties.name) // change 'name' to match your geojson property labels
-      }
-    }).addTo(map);  // insert ".addTo(map)" to display layer by default
-    controlLayers.addOverlay(geoJsonLayer, 'CT Towns');  // insert your 'Title' to add to legend
-  });
+  L.marker([41.77, -72.69]).addTo(map) // EDIT latitude, longitude to re-position marker
+  .bindPopup("Insert pop-up text"); // EDIT pop-up text message
 
   </script>
 </body>
