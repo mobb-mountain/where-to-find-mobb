@@ -1,24 +1,56 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>leaflet-map-simple</title>
+    <title>Where to Buy Mobb Mountain Products</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
 
-    <!-- Load Leaflet code library: see https://leafletjs.com/download.html -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
-      integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
-      crossorigin=""
-    />
+    <!-- Load libraries -->
     <script
-      src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
-      integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
-      crossorigin=""
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     ></script>
 
-    <!-- Position the map and title with Cascading Style Sheet (CSS) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+      integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+      integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"
+      integrity="sha512-Abr21JO2YqcJ03XGZRPuZSWKBhJpUAR6+2wH5zBeO4wAw4oksr8PRdF+BKIRsxvCdq+Mv4670rZ+dLnIyabbGw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+      integrity="sha512-uKQ39gEGiyUJl4AI6L+ekBdGKpGw4xJ55+xyJG7YFlJokPNYegn9KwQ3P8A7aFQAUtUsAQHep+d/lrGqrbPIDQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <!-- Position the map -->
     <style>
       body {
         margin: 0;
@@ -31,52 +63,19 @@
         right: 0;
         left: 0;
       }
-      #map-title {
-        position: relative;
-        margin-top: 10px;
-        margin-left: 50px;
-        float: left;
-        background: white;
-        border: 2px solid rgba(0, 0, 0, 0.2);
-        padding: 6px 8px;
-        font-family: Helvetica;
-        font-weight: bold;
-        font-size: 24px;
-        z-index: 800;
-      }
     </style>
   </head>
   <body>
-    <!-- Display the map and title with HTML division tags  -->
     <div id="map"></div>
 
-    <!-- Create the interactive map content with JavaScript (.js) -->
     <script>
-      /* Set up the initial map center and zoom level */
-      var map = L.map("map", {
-        center: [40.59, -105.072], // EDIT coordinates to re-center map
-        zoom: 12, // EDIT from 1 (zoomed out) to 18 (zoomed in)
-        scrollWheelZoom: false,
-      });
-
-      /* display basemap tiles -- see others at https://leaflet-extras.github.io/leaflet-providers/preview/ */
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://osm.org/copyright">\
-        OpenStreetMap</a> contributors, &copy;\
-        <a href="https://carto.com/attribution">CARTO</a>',
-        }
-      ).addTo(map);
-
       /* Define custom icons */
-      var crowxsize = 149.3765;
-      var crowysize = 75.857399;
-      var crowscale = 0.3;
+      const crowxsize = 149.3765;
+      const crowysize = 75.857399;
+      const crowscale = 0.3;
 
-      var crow = L.icon({
-        iconUrl: "styles/MMCrowIllustrator.svg",
+      const crow = L.icon({
+        iconUrl: "styles/crow.svg",
         iconSize: [crowxsize * crowscale, crowysize * crowscale],
       });
 
@@ -104,18 +103,71 @@
         ],
       });
 
+      /* Define functions */
+      function onEachFeature(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+          layer.bindPopup(feature.properties.Name);
+
+          layer.on("mouseover", function (e) {
+            this.openPopup(e.latlng);
+          });
+        }
+      }
+
       /* Display markers */
-      L.marker([40.5900919, -105.0725504], { icon: crow })
-        .addTo(map)
-        .bindPopup("Mobb Mountain Distillers");
+      // L.marker([40.5900919, -105.0725504], { icon: crow })
+      //   .addTo(map)
+      //   .bindPopup("Mobb Mountain Distillers");
 
-      L.marker([40.582014699999988, -105.0858364], { icon: bottlewine })
-        .addTo(map)
-        .bindPopup("Aggie Discount Liquor");
+      // L.marker([40.582014699999988, -105.0858364], { icon: bottlewine })
+      //   .addTo(map)
+      //   .bindPopup("Aggie Discount Liquor");
 
-      L.marker([40.5884357, -105.0745015], { icon: glasscocktail })
-        .addTo(map)
-        .bindPopup("Elliot's Martini Bar");
+      // L.marker([40.5884357, -105.0745015], { icon: glasscocktail })
+      //   .addTo(map)
+      //   .bindPopup("Elliot's Martini Bar");
+
+      var mobbAccounts = null;
+      $.ajax({
+        async: false,
+        global: false,
+        url: "qgis/data.geojson",
+        dataType: "json",
+        success: function (data) {
+          mobbAccounts = data;
+        },
+      });
+
+      var map = L.map("map", {
+        center: [40.59, -105.072],
+        zoom: 12,
+        scrollWheelZoom: true,
+      });
+
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          attribution:
+            '&copy; <a href="https://osm.org/copyright">\
+        OpenStreetMap</a> contributors, &copy;\
+        <a href="https://carto.com/attribution">CARTO</a>',
+        }
+      ).addTo(map);
+
+      // Add requested external GeoJSON to map
+      L.geoJSON(mobbAccounts, {
+        onEachFeature: onEachFeature,
+        pointToLayer: function (feature, latlng) {
+          var accountType = feature.properties.Type;
+          if (accountType == "Distillery") {
+            return L.marker(latlng, { icon: crow });
+          } else if (accountType == "Liquor Store") {
+            return L.marker(latlng, { icon: bottlewine });
+          } else if (accountType == "Restaurant/Bar") {
+            return L.marker(latlng, { icon: glasscocktail });
+          }
+        },
+      }).addTo(map);
     </script>
   </body>
 </html>
