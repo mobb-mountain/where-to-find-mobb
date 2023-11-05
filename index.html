@@ -37,19 +37,13 @@
 
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+      href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css"
     />
 
     <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
-      integrity="sha512-uKQ39gEGiyUJl4AI6L+ekBdGKpGw4xJ55+xyJG7YFlJokPNYegn9KwQ3P8A7aFQAUtUsAQHep+d/lrGqrbPIDQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+      src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"
+      charset="utf-8"
     ></script>
-
     <!-- Position the map -->
     <style>
       body {
@@ -106,7 +100,16 @@
       /* Define functions */
       function onEachFeature(feature, layer) {
         if (feature.properties && feature.properties.Name) {
-          layer.bindPopup(feature.properties.Name);
+          var url = feature.properties.URL;
+          var name = feature.properties.Name;
+          var products = feature.properties.Products;
+          if (products) {
+            var html = "<a href='" + url + "' target='_blank'>" + name + "</a><br>Products: " + products;
+          } else {
+            var html = "<a href='" + url + "' target='_blank'>" + name + "</a><br>";
+          }
+
+          layer.bindPopup(html);
 
           layer.on("mouseover", function (e) {
             this.openPopup(e.latlng);
@@ -168,6 +171,15 @@
           }
         },
       }).addTo(map);
+
+      L.control
+        .locate({
+          keepCurrentZoomLevel: true,
+          strings: {
+            title: "Show my location",
+          },
+        })
+        .addTo(map);
     </script>
   </body>
 </html>
