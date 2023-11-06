@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
 
+    <!-- Define favicon file -->
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
 
     <!-- Load libraries -->
@@ -75,7 +76,6 @@
         iconSize: [crowxsize * crowscale, crowysize * crowscale],
       });
 
-      /* Define custom icons */
       const barrelwoodxsize = 160.867;
       const barrelwoodysize = 181.504;
       const barrelwoodscale = 0.15;
@@ -129,19 +129,7 @@
         }
       }
 
-      /* Display markers */
-      // L.marker([40.5900919, -105.0725504], { icon: crow })
-      //   .addTo(map)
-      //   .bindPopup("Mobb Mountain Distillers");
-
-      // L.marker([40.582014699999988, -105.0858364], { icon: bottlewine })
-      //   .addTo(map)
-      //   .bindPopup("Aggie Discount Liquor");
-
-      // L.marker([40.5884357, -105.0745015], { icon: glasscocktail })
-      //   .addTo(map)
-      //   .bindPopup("Elliot's Martini Bar");
-
+      /* Load account info from GeoJSON file */
       var mobbAccounts = null;
       $.ajax({
         async: false,
@@ -153,12 +141,14 @@
         },
       });
 
+      /* Create map */
       var map = L.map("map", {
         center: [40.59, -105.072],
         zoom: 12,
         scrollWheelZoom: true,
       });
 
+      /* Add basemap */
       L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
         {
@@ -169,7 +159,7 @@
         }
       ).addTo(map);
 
-      // Add requested external GeoJSON to map
+      /* Add account markers */
       L.geoJSON(mobbAccounts, {
         onEachFeature: onEachFeature,
         pointToLayer: function (feature, latlng) {
@@ -184,6 +174,7 @@
         },
       }).addTo(map);
 
+      /* Add geolocation button */
       L.control
         .locate({
           keepCurrentZoomLevel: true,
