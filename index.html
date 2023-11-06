@@ -75,9 +75,19 @@
         iconSize: [crowxsize * crowscale, crowysize * crowscale],
       });
 
+      /* Define custom icons */
+      const barrelwoodxsize = 160.867;
+      const barrelwoodysize = 181.504;
+      const barrelwoodscale = 0.15;
+
+      const barrelwood = L.icon({
+        iconUrl: "styles/barrel-wood.svg",
+        iconSize: [barrelwoodxsize * barrelwoodscale, barrelwoodysize * barrelwoodscale],
+      });
+
       var bottlewinexsize = 24;
       var bottlewineysize = 24;
-      var bottlewinescale = 1.25;
+      var bottlewinescale = 1.4;
 
       var bottlewine = L.icon({
         iconUrl: "styles/bottle-wine.svg",
@@ -165,7 +175,7 @@
         pointToLayer: function (feature, latlng) {
           var accountType = feature.properties.Type;
           if (accountType == "Distillery") {
-            return L.marker(latlng, { icon: crow });
+            return L.marker(latlng, { icon: barrelwood });
           } else if (accountType == "Liquor Store") {
             return L.marker(latlng, { icon: bottlewine });
           } else if (accountType == "Restaurant/Bar") {
