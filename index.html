@@ -165,7 +165,7 @@
         pointToLayer: function (feature, latlng) {
           var accountType = feature.properties.Type;
           if (accountType == "Distillery") {
-            return L.marker(latlng, { icon: barrelwood });
+            return L.marker(latlng, { icon: crow });
           } else if (accountType == "Liquor Store") {
             return L.marker(latlng, { icon: bottlewine });
           } else if (accountType == "Restaurant/Bar") {
