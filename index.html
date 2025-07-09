@@ -5,45 +5,54 @@
   <title>Accounts Map</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     #map { height: 100vh; }
   </style>
+
+  <!-- Leaflet LocateControl -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 </head>
 <body>
   <div id="map"></div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    const map = L.map('map').setView([39.7392, -104.9903], 10);  // center on Colorado
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
+    const map = L.map('map').setView([40.59025, -105.07249], 13);  // center on Colorado
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
-     // Define custom icons
+    L.control.locate({
+      position: 'topleft',
+      flyTo: true,
+      keepCurrentZoomLevel: false,
+      strings: {
+        title: "Show my location"
+      },
+      locateOptions: {
+        enableHighAccuracy: true
+      }
+    }).addTo(map);
+
+    // Define custom icons
     const icons = {
       "Liquor Store": L.icon({
         iconUrl: 'styles/bottle-wine.svg',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        iconSize: [24 * 1.4, 24 * 1.4]
       }),
       "Bar/Restaurant/Venue": L.icon({
         iconUrl: 'styles/glass-cocktail.svg',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        iconSize: [24 * 1.0, 24 * 1.0]
       }),
       "Tasting Room": L.icon({
         iconUrl: 'styles/crow.svg',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        iconSize: [149.3765 * 0.3, 75.857399 * 0.3]
       }),
-      "default": L.icon({
-        iconUrl: 'styles/barrel-wood.svg',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+      "default":  L.icon({
+        iconUrl: 'styles/bottle-wine.svg',
+        iconSize: [24 * 1.4, 24 * 1.4]
       })
     };
 
@@ -67,6 +76,33 @@
           }
         }).addTo(map);
       });
+
+      const legend = L.control({ position: 'bottomright' });
+
+      legend.onAdd = function () {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML = `
+          <style>
+            .legend img {
+              vertical-align: middle;
+              width: 20px;
+              height: 20px;
+              margin-right: 6px;
+            }
+            .legend div {
+              margin-bottom: 5px;
+              font-size: 14px;
+            }
+          </style>
+          <div><img src="styles/bottle-wine.svg"> Liquor Store</div>
+          <div><img src="styles/glass-cocktail.svg"> Bar/Restaurant/Venue</div>
+          <div><img src="styles/crow.svg"> Tasting Room</div>
+        `;
+        return div;
+      };
+
+      legend.addTo(map);
+
   </script>
 </body>
 </html>

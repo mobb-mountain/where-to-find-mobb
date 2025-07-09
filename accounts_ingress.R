@@ -60,7 +60,7 @@ df_mapped <- df |>
 mobb <- tibble(account = "Mobb Mountain Distillers",
                address = "400 Linden St, Fort Collins, CO 80524",
                easy_type = "Tasting Room",
-               easy_products = "Vodka, Bourbon, Gin, Limoncello, Rye, Genever, Single Malt Whiskey (limited)")
+               easy_products = "Vodka, Bourbon, Gin, Limoncello, Rye, Genever, Single Malt Whiskey (limited release)")
 
 df_mapped <- bind_rows(df_mapped, mobb)
 
