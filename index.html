@@ -26,9 +26,10 @@
           onEachFeature: function (feature, layer) {
             const props = feature.properties;
             const popup = `
-              <strong>${props.account}</strong><br>
-              ${props.address}<br>
-              <em>${props.type}</em>
+              <strong>${props.account || ''}</strong><br>
+              ${props.address || ''}<br>
+              <em>${props.easy_type || ''}</em><br>
+              ${props.easy_products ? `Products: ${props.easy_products}` : ''}
             `;
             layer.bindPopup(popup);
           }
