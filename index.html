@@ -1,188 +1,108 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Where to Find Mobb Mountain Products</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta charset="utf-8" />
+<head>
+  <meta charset="utf-8" />
+  <title>Accounts Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map { height: 100vh; }
+  </style>
 
-    <!-- Define favicon file -->
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico?">
+  <!-- Leaflet LocateControl -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    const map = L.map('map').setView([40.59025, -105.07249], 13);  // center on Colorado
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
 
-    <!-- Load libraries -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
-      integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
-      integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"
-      integrity="sha512-Abr21JO2YqcJ03XGZRPuZSWKBhJpUAR6+2wH5zBeO4wAw4oksr8PRdF+BKIRsxvCdq+Mv4670rZ+dLnIyabbGw=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css"
-    />
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"
-      charset="utf-8"
-    ></script>
-    <!-- Position the map -->
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
+    L.control.locate({
+      position: 'topleft',
+      flyTo: true,
+      keepCurrentZoomLevel: false,
+      strings: {
+        title: "Show my location"
+      },
+      locateOptions: {
+        enableHighAccuracy: true
       }
-      #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="map"></div>
+    }).addTo(map);
 
-    <script>
-      /* Define custom icons */
-      const crowxsize = 149.3765;
-      const crowysize = 75.857399;
-      const crowscale = 0.3;
+    // Define custom icons
+    const icons = {
+      "Liquor Store": L.icon({
+        iconUrl: 'styles/bottle-wine.svg',
+        iconSize: [24 * 1.4, 24 * 1.4]
+      }),
+      "Bar/Restaurant/Venue": L.icon({
+        iconUrl: 'styles/glass-cocktail.svg',
+        iconSize: [24 * 1.0, 24 * 1.0]
+      }),
+      "Tasting Room": L.icon({
+        iconUrl: 'styles/crow.svg',
+        iconSize: [149.3765 * 0.3, 75.857399 * 0.3]
+      }),
+      "default":  L.icon({
+        iconUrl: 'styles/bottle-wine.svg',
+        iconSize: [24 * 1.4, 24 * 1.4]
+      })
+    };
 
-      const crow = L.icon({
-        iconUrl: "styles/crow.svg",
-        iconSize: [crowxsize * crowscale, crowysize * crowscale],
-      });
-
-      const barrelwoodxsize = 160.867;
-      const barrelwoodysize = 181.504;
-      const barrelwoodscale = 0.15;
-
-      const barrelwood = L.icon({
-        iconUrl: "styles/barrel-wood.svg",
-        iconSize: [barrelwoodxsize * barrelwoodscale, barrelwoodysize * barrelwoodscale],
-      });
-
-      const bottlewinexsize = 24;
-      const bottlewineysize = 24;
-      const bottlewinescale = 1.4;
-
-      const bottlewine = L.icon({
-        iconUrl: "styles/bottle-wine.svg",
-        iconSize: [
-          bottlewinexsize * bottlewinescale,
-          bottlewineysize * bottlewinescale,
-        ],
-      });
-
-      const glasscocktailxsize = 24;
-      const glasscocktailysize = 24;
-      const glasscocktailscale = 1;
-
-      const glasscocktail = L.icon({
-        iconUrl: "styles/glass-cocktail.svg",
-        iconSize: [
-          glasscocktailxsize * glasscocktailscale,
-          glasscocktailysize * glasscocktailscale,
-        ],
-      });
-
-      /* Define functions */
-      function onEachFeature(feature, layer) {
-        if (feature.properties && feature.properties.Name) {
-          var url = feature.properties.URL;
-          var name = feature.properties.Name;
-          var products = feature.properties.Products;
-          if (products) {
-            var html = "<a href='" + url + "' target='_blank'>" + name + "</a><br>Products: " + products;
-          } else {
-            var html = "<a href='" + url + "' target='_blank'>" + name + "</a><br>";
-          }
-
-          layer.bindPopup(html);
-
-          layer.on("mouseover", function (e) {
-            this.openPopup(e.latlng);
-          });
-        }
-      }
-
-      /* Load account info from GeoJSON file */
-      var mobbAccounts = null;
-      $.ajax({
-        async: false,
-        global: false,
-        url: "qgis/data.geojson",
-        dataType: "json",
-        success: function (data) {
-          mobbAccounts = data;
-        },
-      });
-
-      /* Create map */
-      var map = L.map("map", {
-        center: [40.59, -105.072],
-        zoom: 12,
-        scrollWheelZoom: true,
-      });
-
-      /* Add basemap */
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-        {
-          attribution:
-            '&copy; <a href="https://osm.org/copyright">\
-        OpenStreetMap</a> contributors, &copy;\
-        <a href="https://carto.com/attribution">CARTO</a>',
-        }
-      ).addTo(map);
-
-      /* Add account markers */
-      L.geoJSON(mobbAccounts, {
-        onEachFeature: onEachFeature,
-        pointToLayer: function (feature, latlng) {
-          var accountType = feature.properties.Type;
-          if (accountType == "Distillery") {
-            return L.marker(latlng, { icon: crow });
-          } else if (accountType == "Liquor Store") {
-            return L.marker(latlng, { icon: bottlewine });
-          } else if (accountType == "Restaurant/Bar") {
-            return L.marker(latlng, { icon: glasscocktail });
-          }
-        },
-      }).addTo(map);
-
-      /* Add geolocation button */
-      L.control
-        .locate({
-          keepCurrentZoomLevel: true,
-          strings: {
-            title: "Show my location",
+    fetch("accounts.geojson")
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          pointToLayer: function (feature, latlng) {
+            const type = feature.properties.easy_type || "default";
+            const icon = icons[type] || icons["default"];
+            return L.marker(latlng, { icon: icon });
           },
-        })
-        .addTo(map);
-    </script>
-  </body>
+          onEachFeature: function (feature, layer) {
+            const props = feature.properties;
+            const popupLines = [];
+            if (props.account) popupLines.push(`<strong>${props.account}</strong>`);
+            if (props.address) popupLines.push(props.address);
+            if (props.easy_type) popupLines.push(`<em>${props.easy_type}</em>`);
+            if (props.easy_products) popupLines.push(`Products: ${props.easy_products}`);
+            layer.bindPopup(popupLines.join('<br>'));
+          }
+        }).addTo(map);
+      });
+
+      const legend = L.control({ position: 'bottomright' });
+
+      legend.onAdd = function () {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML = `
+          <style>
+            .legend img {
+              vertical-align: middle;
+              width: 20px;
+              height: 20px;
+              margin-right: 6px;
+            }
+            .legend div {
+              margin-bottom: 5px;
+              font-size: 14px;
+            }
+          </style>
+          <div><img src="styles/bottle-wine.svg"> Liquor Store</div>
+          <div><img src="styles/glass-cocktail.svg"> Bar/Restaurant/Venue</div>
+          <div><img src="styles/crow.svg"> Tasting Room</div>
+        `;
+        return div;
+      };
+
+      legend.addTo(map);
+
+  </script>
+</body>
 </html>
