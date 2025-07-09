@@ -19,19 +19,51 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+     // Define custom icons
+    const icons = {
+      "Liquor Store": L.icon({
+        iconUrl: 'styles/bottle-wine.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      "Bar/Restaurant/Venue": L.icon({
+        iconUrl: 'styles/glass-cocktail.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      "Tasting Room": L.icon({
+        iconUrl: 'styles/crow.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      "default": L.icon({
+        iconUrl: 'styles/barrel-wood.svg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      })
+    };
+
     fetch("accounts.geojson")
       .then(response => response.json())
       .then(data => {
         L.geoJSON(data, {
+          pointToLayer: function (feature, latlng) {
+            const type = feature.properties.easy_type || "default";
+            const icon = icons[type] || icons["default"];
+            return L.marker(latlng, { icon: icon });
+          },
           onEachFeature: function (feature, layer) {
             const props = feature.properties;
-            const popup = `
-              <strong>${props.account || ''}</strong><br>
-              ${props.address || ''}<br>
-              <em>${props.easy_type || ''}</em><br>
-              ${props.easy_products ? `Products: ${props.easy_products}` : ''}
-            `;
-            layer.bindPopup(popup);
+            const popupLines = [];
+            if (props.account) popupLines.push(`<strong>${props.account}</strong>`);
+            if (props.address) popupLines.push(props.address);
+            if (props.easy_type) popupLines.push(`<em>${props.easy_type}</em>`);
+            if (props.easy_products) popupLines.push(`Products: ${props.easy_products}`);
+            layer.bindPopup(popupLines.join('<br>'));
           }
         }).addTo(map);
       });
