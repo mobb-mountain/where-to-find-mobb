@@ -1,8 +1,11 @@
 library(googlesheets4)
-library(tidyverse)
-library(tidytext)
-library(sf)
 library(ggmap)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(janitor)
+library(tibble)
+library(sf)
 library(geojsonio)
 
 # test the map by running: python3 -m http.server 8000
