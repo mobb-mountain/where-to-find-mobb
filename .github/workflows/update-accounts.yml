@@ -1,4 +1,4 @@
-name: Update Accounts GeoJSON
+name: update-accounts
 
 on:
   schedule:
