@@ -17,7 +17,7 @@ jobs:
 
       - name: Install packages
         run: |
-          Rscript -e 'install.packages(c("googlesheets4", "ggmap", "dplyr", "sf", "jsonlite"))'
+          Rscript -e 'install.packages(c("googlesheets4", "ggmap", "dplyr", "tidyr", "stringr", "janitor", "tibble", "sf", "geojsonio"))'
 
       - name: Run update script
         env:
