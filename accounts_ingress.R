@@ -70,7 +70,8 @@ df_mapped <- bind_rows(df_mapped, mobb)
 # Geocode
 df_geocoded <- df_mapped |> filter(!is.na(address))
 coords <- geocode(df_geocoded$address, output = "latlon", source = "google")
-df_geo <- bind_cols(df_geocoded, coords)
+df_geo <- bind_cols(df_geocoded, coords) %>%
+  drop_na(lon, lat)
 
 # Convert to sf for GeoJSON export
 df_sf <- st_as_sf(df_geo, coords = c("lon", "lat"), crs = 4326)
