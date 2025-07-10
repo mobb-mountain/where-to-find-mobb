@@ -159,16 +159,11 @@
           const icon = icons[type] || icons["default"];
           const latlng = feature.geometry.coordinates.reverse(); // [lat, lon]
 
-          const popupLines = [];
-          if (props.account) popupLines.push(`<strong>${props.account}</strong>`);
-          if (props.address) popupLines.push(props.address);
-          if (props.easy_type) popupLines.push(`<em>${props.easy_type}</em>`);
-          if (props.easy_products) popupLines.push(`Products: ${props.easy_products}`);
-
           const marker = L.marker(latlng, { icon: icon })
-            .bindPopup(popupLines.join('<br>'));
-          marker.feature = feature;
-          marker.addTo(layerGroup);
+            .bindPopup(props.popup || "")
+            .addTo(layerGroup);
+
+          marker.feature = feature; // attach the original feature for filtering
           allMarkers.push(marker);
         });
       });
@@ -190,7 +185,7 @@
       });
     });
 
-    const legend = L.control({ position: 'bottomright' });
+    const legend = L.control({ position: 'bottomleft' });
     legend.onAdd = function () {
       const div = L.DomUtil.create('div', 'info legend');
       div.innerHTML = `

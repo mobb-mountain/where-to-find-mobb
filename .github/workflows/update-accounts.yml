@@ -1,0 +1,51 @@
+name: update-accounts
+
+on:
+  schedule:
+    - cron: '0 5 1 * *'  # Runs at 05:00 UTC on the 1st of every month
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libudunits2-dev \
+            libproj-dev \
+            libgdal-dev \
+            libprotobuf-dev \
+            protobuf-compiler \
+            libjpeg-dev \
+            libpng-dev \
+            pkg-config \
+            libjq-dev
+            
+      - name: Install packages
+        run: |
+          Rscript -e 'install.packages(c("googlesheets4", "ggmap", "dplyr", "tidyr", "stringr", "janitor", "tibble", "sf", "geojsonio"))'
+
+      - name: Run update script
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GSHEET_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEET_SERVICE_ACCOUNT_JSON }}
+        run: Rscript update_accounts.R
+
+      - name: Commit and push GeoJSON update
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add accounts.geojson
+          git diff --cached --quiet && echo "No changes to commit" || git commit -m "Update accounts.geojson [CI skip]"
+          git push origin main
