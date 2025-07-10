@@ -20,6 +20,19 @@
 
 </head>
 <body>
+  <div style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; padding: 6px; border-radius: 6px; font-size: 14px;">
+    <label for="product-filter"><strong>Filter by product:</strong></label><br>
+    <select id="product-filter">
+      <option value="">Show all</option>
+      <option value="Vodka">Vodka</option>
+      <option value="Bourbon">Bourbon</option>
+      <option value="Gin">Gin</option>
+      <option value="Limoncello">Limoncello</option>
+      <option value="Rye">Rye</option>
+      <option value="Genever">Genever</option>
+    </select>
+  </div>
+
   <div id="map"></div>
   <script>
     const map = L.map('map').setView([40.5, -105.07249], 11);  
@@ -89,25 +102,48 @@
       })
     };
 
+    let allMarkers = []; // Store all markers globally
+
     fetch("accounts.geojson")
       .then(response => response.json())
       .then(data => {
-        L.geoJSON(data, {
-          pointToLayer: function (feature, latlng) {
-            const type = feature.properties.easy_type || "default";
-            const icon = icons[type] || icons["default"];
-            return L.marker(latlng, { icon: icon });
-          },
-          onEachFeature: function (feature, layer) {
-            const props = feature.properties;
-            const popupLines = [];
-            if (props.account) popupLines.push(`<strong>${props.account}</strong>`);
-            if (props.address) popupLines.push(props.address);
-            if (props.easy_type) popupLines.push(`<em>${props.easy_type}</em>`);
-            if (props.easy_products) popupLines.push(`Products: ${props.easy_products}`);
-            layer.bindPopup(popupLines.join('<br>'));
-          }
-        }).addTo(map);
+        // Clear existing markers (if rerendering)
+        const layerGroup = L.layerGroup().addTo(map);
+
+        data.features.forEach(feature => {
+          const props = feature.properties;
+          const type = props.easy_type || "default";
+          const icon = icons[type] || icons["default"];
+          const latlng = feature.geometry.coordinates.reverse(); // GeoJSON is [lon, lat]
+
+          const popupLines = [];
+          if (props.account) popupLines.push(`<strong>${props.account}</strong>`);
+          if (props.address) popupLines.push(props.address);
+          if (props.easy_type) popupLines.push(`<em>${props.easy_type}</em>`);
+          if (props.easy_products) popupLines.push(`Products: ${props.easy_products}`);
+
+          const marker = L.marker(latlng, { icon: icon })
+            .bindPopup(popupLines.join('<br>'))
+            .addTo(layerGroup);
+
+          marker.feature = feature; // attach the original feature for filtering
+          allMarkers.push(marker);
+        });
+
+        // Add filtering logic
+        const filterSelect = document.getElementById("product-filter");
+        filterSelect.addEventListener("change", () => {
+          const selected = filterSelect.value.toLowerCase();
+          allMarkers.forEach(marker => {
+            const productList = (marker.feature.properties.easy_products || "").toLowerCase();
+            const match = !selected || productList.includes(selected);
+            if (match) {
+              marker.addTo(layerGroup);
+            } else {
+              layerGroup.removeLayer(marker);
+            }
+          });
+        });
       });
 
       const legend = L.control({ position: 'bottomright' });
