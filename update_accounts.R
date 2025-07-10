@@ -4,11 +4,17 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(janitor)
-library(tibble)
+library(tibble) 
 library(sf)
 library(geojsonio)
 
+# the Google Sheets API must be enabled for this to work
+
 # test the map by running: python3 -m http.server 8000
+
+# to test, use:
+# Sys.setenv(GSHEET_SERVICE_ACCOUNT_JSON = "/path/to/your/service-account.json")
+# Sys.setenv(GOOGLE_MAPS_API_KEY = "your-google-maps-api-key")
 
 # Authenticate with service account
 gs4_auth(path = Sys.getenv("GSHEET_SERVICE_ACCOUNT_JSON"))
@@ -25,10 +31,10 @@ type_map <- tibble(type = c("On Premise",
 product_map <- tibble(products = c("V", "B", "G", "Lim", "Rye", "Gen"),
                       easy_products = c("Vodka", "Bourbon", "Gin", "Limoncello", "Rye", "Genever"))
 
-sheet_url <- "https://docs.google.com/spreadsheets/d/1PmbShY8hdUBKz3PJPfVD_OTJNzTdHUrmx_xfeWy0GOM/edit?gid=0#gid=0"
+sheet_url <- "https://docs.google.com/spreadsheets/d/1PmbShY8hdUBKz3PJPfVD_OTJNzTdHUrmx_xfeWy0GOM"
 
 df <- read_sheet(sheet_url) |> 
-  janitor::clean_names() |>  # standardizes column names (e.g., all lowercase, underscores)
+  janitor::clean_names() |>
   rename(
     account = account,
     address = address_as_shown_in_google,
