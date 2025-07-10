@@ -7,11 +7,11 @@ library(geojsonio)
 
 # test the map by running: python3 -m http.server 8000
 
-# this account must have access to the Accounts List Google Sheet
-gs4_auth()
+# Authenticate with service account
+gs4_auth(path = Sys.getenv("GSHEET_SERVICE_ACCOUNT_JSON"))
 
-# any Google Maps API key should work here (free for this few uses)
-register_google(key = "API-KEY-HERE", write = TRUE)
+# Register Maps API Key
+register_google(key = Sys.getenv("GOOGLE_MAPS_API_KEY"), write = TRUE)
 
 # remap data to web map friendly termsx 
 type_map <- tibble(type = c("On Premise",
