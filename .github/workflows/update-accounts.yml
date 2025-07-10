@@ -20,12 +20,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             libcurl4-openssl-dev \
-            libjpeg-dev \
-            libpng-dev \
+            libssl-dev \
+            libudunits2-dev \
+            libproj-dev \
+            libgdal-dev \
             libprotobuf-dev \
             protobuf-compiler \
+            libjpeg-dev \
+            libpng-dev \
             pkg-config
-
+            
       - name: Install packages
         run: |
           Rscript -e 'install.packages(c("googlesheets4", "ggmap", "dplyr", "tidyr", "stringr", "janitor", "tibble", "sf", "geojsonio"))'
