@@ -40,3 +40,12 @@ jobs:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           GSHEET_SERVICE_ACCOUNT_JSON: ${{ secrets.GSHEET_SERVICE_ACCOUNT_JSON }}
         run: Rscript update_accounts.R
+
+      - name: Commit and push GeoJSON update
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add accounts.geojson
+          git diff --cached --quiet && echo "No changes to commit" || git commit -m "Update accounts.geojson [CI skip]"
+          git push origin main
