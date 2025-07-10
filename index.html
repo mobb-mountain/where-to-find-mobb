@@ -38,6 +38,13 @@
       },
       locateOptions: {
         enableHighAccuracy: true
+      },
+      onLocationError: function(err) {
+        alert(
+          "We couldn’t determine your location.\n\n" +
+          "If you're on a laptop, make sure Wi-Fi is turned on and location services are enabled.\n" +
+          "You can also use the search box to find a location manually."
+        );
       }
     }).addTo(map);
 
