@@ -6,9 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <style>
-    #map { height: 100vh; }
-  </style>
 
   <!-- Leaflet LocateControl -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css"/>
@@ -18,19 +15,64 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
   <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
+  <style>
+    body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+    #product-gallery {
+      display: flex;
+      overflow-x: auto;
+      gap: 1em;
+      padding: 1em;
+      background: #f9f9f9;
+      border-bottom: 1px solid #ccc;
+    }
+    .product {
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      padding: 4px;
+      flex: 0 0 auto;
+    }
+    .product.selected {
+      border-color: #444;
+      background: #eee;
+    }
+    .product img {
+      width: 60px;
+      height: auto;
+      display: block;
+      margin: 0 auto 4px;
+    }
+    #map { flex: 1; }
+  </style>
 </head>
+
 <body>
-  <div style="position: absolute; top: 10px; right: 10px; z-index: 1000; background: white; padding: 6px; border-radius: 6px; font-size: 14px;">
-    <label for="product-filter"><strong>Filter by product:</strong></label><br>
-    <select id="product-filter">
-      <option value="">Show all</option>
-      <option value="Vodka">Vodka</option>
-      <option value="Bourbon">Bourbon</option>
-      <option value="Gin">Gin</option>
-      <option value="Limoncello">Limoncello</option>
-      <option value="Rye">Rye</option>
-      <option value="Genever">Genever</option>
-    </select>
+  <div id="product-gallery">
+    <div class="product" data-product="Vodka">
+      <img src="assets/bottle-of-whiskey-placeholder.png" alt="Vodka">
+      <div>Vodka</div>
+    </div>
+    <div class="product" data-product="Bourbon">
+      <img src="assets/bottle-of-whiskey-placeholder.png" alt="Bourbon">
+      <div>Bourbon</div>
+    </div>
+    <div class="product" data-product="Gin">
+      <img src="assets/bottle-of-whiskey-placeholder.png" alt="Gin">
+      <div>Gin</div>
+    </div>
+    <div class="product" data-product="Limoncello">
+      <img src="assets/bottle-of-whiskey-placeholder.png" alt="Limoncello">
+      <div>Limoncello</div>
+    </div>
+    <div class="product" data-product="Rye">
+      <img src="assets/bottle-of-whiskey-placeholder.png" alt="Rye">
+      <div>Rye</div>
+    </div>
+    <div class="product" data-product="Genever">
+      <img src="assets/bottle-of-whiskey-placeholder.png" alt="Genever">
+      <div>Genever</div>
+    </div>
   </div>
 
   <div id="map"></div>
@@ -46,12 +88,8 @@
       position: 'topleft',
       flyTo: true,
       keepCurrentZoomLevel: false,
-      strings: {
-        title: "Show my location"
-      },
-      locateOptions: {
-        enableHighAccuracy: true
-      },
+      strings: { title: "Show my location" },
+      locateOptions: { enableHighAccuracy: true },
       onLocationError: function(err) {
         alert(
           "We couldn’t determine your location.\n\n" +
@@ -65,18 +103,11 @@
       position: 'topleft',
       defaultMarkGeocode: true
     }).on('markgeocode', function(e) {
-    const center = e.geocode.center;
-
-    // Set custom zoom level (e.g., 15)
-    map.setView(center, 15);
-
-    // Optional: add a marker and popup
-    L.marker(center)
-      .addTo(map)
-      .bindPopup(e.geocode.name)
-      .openPopup();
+      const center = e.geocode.center;
+      map.setView(center, 15);
+      L.marker(center).addTo(map).bindPopup(e.geocode.name).openPopup();
     }).addTo(map);
-      
+
     setTimeout(() => {
       const input = document.querySelector('.leaflet-control-geocoder-form input');
       if (input) input.placeholder = "Enter an address to search";
@@ -96,25 +127,37 @@
         iconUrl: 'styles/crow.svg',
         iconSize: [149.3765 * 0.3, 75.857399 * 0.3]
       }),
-      "default":  L.icon({
+      "default": L.icon({
         iconUrl: 'styles/bottle-wine.svg',
         iconSize: [24 * 1.4, 24 * 1.4]
       })
     };
 
-    let allMarkers = []; // Store all markers globally
+    let allMarkers = [];
+    let layerGroup = L.layerGroup().addTo(map);
+    let selectedProduct = null;
+
+    function updateMarkers() {
+      allMarkers.forEach(marker => {
+        const props = marker.feature.properties;
+        const products = (props.easy_products || "").toLowerCase();
+        const match = !selectedProduct || products.includes(selectedProduct.toLowerCase());
+        if (match) {
+          layerGroup.addLayer(marker);
+        } else {
+          layerGroup.removeLayer(marker);
+        }
+      });
+    }
 
     fetch("accounts.geojson")
       .then(response => response.json())
       .then(data => {
-        // Clear existing markers (if rerendering)
-        const layerGroup = L.layerGroup().addTo(map);
-
         data.features.forEach(feature => {
           const props = feature.properties;
           const type = props.easy_type || "default";
           const icon = icons[type] || icons["default"];
-          const latlng = feature.geometry.coordinates.reverse(); // GeoJSON is [lon, lat]
+          const latlng = feature.geometry.coordinates.reverse(); // [lat, lon]
 
           const popupLines = [];
           if (props.account) popupLines.push(`<strong>${props.account}</strong>`);
@@ -123,55 +166,53 @@
           if (props.easy_products) popupLines.push(`Products: ${props.easy_products}`);
 
           const marker = L.marker(latlng, { icon: icon })
-            .bindPopup(popupLines.join('<br>'))
-            .addTo(layerGroup);
-
-          marker.feature = feature; // attach the original feature for filtering
+            .bindPopup(popupLines.join('<br>'));
+          marker.feature = feature;
+          marker.addTo(layerGroup);
           allMarkers.push(marker);
-        });
-
-        // Add filtering logic
-        const filterSelect = document.getElementById("product-filter");
-        filterSelect.addEventListener("change", () => {
-          const selected = filterSelect.value.toLowerCase();
-          allMarkers.forEach(marker => {
-            const productList = (marker.feature.properties.easy_products || "").toLowerCase();
-            const match = !selected || productList.includes(selected);
-            if (match) {
-              marker.addTo(layerGroup);
-            } else {
-              layerGroup.removeLayer(marker);
-            }
-          });
         });
       });
 
-      const legend = L.control({ position: 'bottomright' });
+    document.querySelectorAll(".product").forEach(el => {
+      el.addEventListener("click", () => {
+        const product = el.dataset.product;
+        const isActive = el.classList.contains("selected");
 
-      legend.onAdd = function () {
-        const div = L.DomUtil.create('div', 'info legend');
-        div.innerHTML = `
-          <style>
-            .legend img {
-              vertical-align: middle;
-              width: 20px;
-              height: 20px;
-              margin-right: 6px;
-            }
-            .legend div {
-              margin-bottom: 5px;
-              font-size: 14px;
-            }
-          </style>
-          <div><img src="styles/bottle-wine.svg"> Liquor Store</div>
-          <div><img src="styles/glass-cocktail.svg"> Bar/Restaurant/Venue</div>
-          <div><img src="styles/crow.svg"> Tasting Room</div>
-        `;
-        return div;
-      };
+        document.querySelectorAll(".product").forEach(p => p.classList.remove("selected"));
+        if (!isActive) {
+          el.classList.add("selected");
+          selectedProduct = product;
+        } else {
+          selectedProduct = null;
+        }
 
-      legend.addTo(map);
+        updateMarkers();
+      });
+    });
 
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function () {
+      const div = L.DomUtil.create('div', 'info legend');
+      div.innerHTML = `
+        <style>
+          .legend img {
+            vertical-align: middle;
+            width: 20px;
+            height: 20px;
+            margin-right: 6px;
+          }
+          .legend div {
+            margin-bottom: 5px;
+            font-size: 14px;
+          }
+        </style>
+        <div><img src="styles/bottle-wine.svg"> Liquor Store</div>
+        <div><img src="styles/glass-cocktail.svg"> Bar/Restaurant/Venue</div>
+        <div><img src="styles/crow.svg"> Tasting Room</div>
+      `;
+      return div;
+    };
+    legend.addTo(map);
   </script>
 </body>
 </html>
